@@ -1,0 +1,48 @@
+<!-- language file start -->
+rep_robj_xmma_obj_xmma#:#Multimediaportal-Album
+rep_robj_xmma_objs_xmma#:#Multimediaportal-Alben
+obj_xmma#:#Multimediaportal-Album
+objs_xmma#:#Multimediaportal-Alben
+obj_xmma_duplicate#:#Kopieren
+objs_xmma_duplicate#:#Multimediaportal-Album kopieren
+obj_xmma_select#:#Multimediaportal-Album auswählen
+xmma_copy#:#Multimediaportal-Album kopieren
+root_create_xmma#:#Neues Multimediaportal-Album anlegen
+crs_create_xmma#:#Neues Multimediaportal-Album anlegen
+grp_create_xmma#:#Neues Multimediaportal-Album anlegen
+cat_create_xmma#:#Neues Multimediaportal-Album anlegen
+fold_create_xmma#:#Neues Multimediaportal-Album anlegen
+xmma_visible#:#Album ist sichtbar
+xmma_read#:#Inhalt des Albums lesen
+xmma_write#:#Inhalt des Albums bearbeiten
+xmma_delete#:#Album löschen
+xmma_edit_permission#:#Rechteeinstellungen ändern
+plugin_configuration#:#Konfiguration des Multimediaportal Album-Plugins
+secret_key#:#Secret-Key
+secret_key_info#:#Der Secret-Key für den externen Zugriff auf das Multimediaportal.
+url_album_xml_format#:#URL für das Album-XML
+url_album_xml_info#:#URL um das XML für Alben zu holen. Folgende Platzhalter werden benötigt:<br/>[ID] = Album-ID<br/>[SID] = Secret-Key
+url_album_list_format#:#URL für die Albumliste
+url_album_list_info#:#URL um die Liste von Alben eines Benutzers zu holen. Folgende Platzhalter werden benötigt:<br/>[LOGIN] = User-Login<br/>[SID] = Secret-Key
+xmma_new#:#Neues Album anlegen
+xmma_add#:#Album anlegen
+album#:#Album
+album_id#:#Album-ID
+album_id_info#:#Kopieren Sie hier die Album-ID hinein, welche im Multimediaportal angegeben wird.
+update_mode#:#Update-Modus
+update_mode_auto#:#Automatisch
+update_mode_auto_info#:#Alle Änderungen im Multimediaportal sind in ILIAS sofort ersichtlich.
+update_mode_manual#:#Manuell
+update_mode_manual_info#:#Änderungen im Multimediaportal werden erst angezeigt, nachdem das Album in ILIAS aktualisiert wurde.<br/>ACHTUNG: Falls Bilder im Multimediaportal gelöscht werden, sind diese auch in ILIAS nicht mehr ersichtlich!
+update_mode_last_update#:#letztes Update: %s
+update_now#:#Album jetzt aktualisieren
+update_successful#:#Das Album wurde erfolgreich aktualisiert.
+update_failed#:#Beim Aktualisieren des Albums ist ein Fehler aufgetreten.
+load_album_error#:#Das Album kann nicht angezeigt werden, da Fehler aufgetreten sind. 
+request_album_error#:#Fehler beim Anfordern von Album mit ID '%s':<br/><strong>%s</strong>
+xml_album_error#:#Fehler beim Laden der XML-Definition von Album mit ID '%s': %s
+album_not_found#:#Das Album existiert nicht im Multimediaportal.
+get_album_info_when_empty#:#Wenn das Feld leer gelassen wird, wird der Text von dem Album verwendet.<br/>HINWEIS: Das Feld wird nicht automatisch aktualisiert!
+image_loading#:#Wird geladen...
+download#:#Herunterladen
+selection_required#:#Hier ist eine Angabe erforderlich. Bitte wählen Sie einen Eintrag aus.

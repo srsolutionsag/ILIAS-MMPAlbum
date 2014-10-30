@@ -1,0 +1,268 @@
+/* GENERAL */
+div.xmmaToolbar {
+	padding: 5px 0;
+	border-bottom: 1px dotted #C9D3E7;
+	height: 25px;
+	display: none;
+}
+div.xmmaToolbarLabel {
+	border: 1px solid transparent;
+	/*background: #FF9999;*/
+	line-height: 25px;
+	float: left;
+	padding: 0 5px;
+	margin: 0 3px;
+}
+div.xmmaToolbarButton {
+	border: 1px solid #C9D3E7;
+	/*width: 30px;*/
+	background: red;
+	line-height: 25px;
+	float: left;
+	padding: 0 10px;
+	border-radius: 3px;	
+	margin: 0 3px;
+}
+.xmmaRight {
+	float: right;
+}
+#xmmaAlbum {
+	
+}
+
+/* LIST */
+div.xmmaImage,
+div.xmmaVideo {
+	position: relative;
+	float: left;
+	margin: 10px 5px 5px 5px;
+	overflow: hidden;
+	background: #FFFFFF;
+}
+div.xmmaImage:hover div.xmmaImageDownload {
+	display: inline;
+}
+div.xmmaImage:hover div.xmmaImageTitle {
+	display: none;
+}
+div.xmmaImage:hover > a.xmmaThumb,
+div.xmmaVideo:hover > a.xmmaThumb {
+	background: #CDD9EF;
+	border: 1px solid #aeb8cb;
+}
+div.xmmaImage:hover span.xmmaImageOverlay {
+	display: block;
+	background: transparent url(images/fullscreen_overlay.png) no-repeat center center;
+}
+div.xmmaVideo:hover span.xmmaVideoOverlay {
+	display: block;
+	background: transparent url(images/fullscreen_overlay_video.png) no-repeat center center;
+}
+
+a.xmmaThumb {
+	padding: 10px 10px 24px 10px;
+	display: block;
+	background: #FFFFFF;
+	text-align: center;
+	outline: none;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	border: 1px solid #FFFFFF;
+	
+	-webkit-transition: all 0.3s ease-out;
+    -o-transition: all 0.3s ease-out;
+    -moz-transition: all 0.3s ease-out;
+    -ms-transition: all 0.3s ease-out;
+    transition: all 0.3s ease-out;
+}
+a.xmmaThumb > img {	
+	border: 1px solid #d6dbe5; /* d6dbe5 BCCAE5 */
+}
+
+span.xmmaImageOverlay,
+span.xmmaVideoOverlay {
+	position: absolute;
+	display: block;
+	top: 1px;
+	left: 1px;
+	padding: 10px 10px 10px 10px;
+	cursor: pointer;
+}
+
+div.xmmaImageTitle,
+div.xmmaVideoTitle {
+	position: absolute;
+	line-height: 18px;
+	bottom: 5px;
+	left: 5px;
+	right: 5px;
+	padding: 0 2px;
+	text-align: center;
+	color: #000000;
+	font-size: 12px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+div.xmmaImageDownload {
+	position: absolute;
+	display: none;
+	bottom: 5px;
+	left: 5px;
+	right: 5px;
+	text-align: center;
+	font-size: 12px;
+	line-height: 18px;	
+	white-space: nowrap;
+	overflow: hidden;
+}
+div.xmmaImageDownload > a {
+	background: transparent url(images/download.png) no-repeat 4px 0;
+	outline: none;
+	font-size: 11px;
+	padding: 2px 6px 3px 24px;
+	pointer-events: default;
+}
+div.xmmaImageDownload > a:hover {
+	background: transparent url(images/download.png) no-repeat 4px -18px;
+}
+
+/* TILES */
+div.xmmaImageTile {
+	position: relative;
+	float: left;
+	margin: 20px 10px;
+	padding: 5px;
+	background: #000000;
+}
+div.xmmaImageTile > a {
+	display: block;
+}
+
+/* LIGHTBOX */
+#xmmaLightbox {
+	position: fixed;
+	left: 0px;
+	top: 0px;
+	bottom: 0px;
+	right: 0px;
+    display: none;
+	z-index: 10000;
+}
+#xmmaLightboxBackground {
+	position: absolute;
+	top: 0px;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+	background: #202020 url(images/lightbox_bg.png) repeat-x 0px 0px;
+}
+#xmmaLightboxContent {
+	position: absolute;
+	top: 0px;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+}
+#xmmaLightboxNav {
+	top: 0px;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+}
+#xmmaLightboxNavPrev {
+	position: absolute;
+	top: 0px;
+	left: 0px;
+	bottom: 0px;
+	width: 88px;
+	cursor: pointer;
+}
+#xmmaLightboxNavPrev > div {
+	position: absolute;
+	width: 48px;
+	height: 48px;
+	top: 50%;
+	left: 20px;
+	margin-top: -30px;
+	cursor: pointer;
+	background: transparent url(images/lightbox_nav_bg.png) no-repeat 0px 0px;
+}
+#xmmaLightboxNavPrev:hover > div {
+	background: transparent url(images/lightbox_nav_bg.png) no-repeat 0px -48px;
+}
+
+#xmmaLightboxNavNext {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	bottom: 0px;
+	width: 88px;
+	cursor: pointer;
+}
+#xmmaLightboxNavNext > div {
+	position: absolute;
+	width: 48px;
+	height: 48px;
+	top: 50%;
+	right: 20px;
+	margin-top: -30px;
+	cursor: pointer;
+	background: transparent url(images/lightbox_nav_bg.png) no-repeat -48px 0px;
+}
+#xmmaLightboxNavNext:hover > div {
+	background: transparent url(images/lightbox_nav_bg.png) no-repeat -48px -48px;
+}
+
+#xmmaLightboxNavClose {
+	position: absolute;
+	width: 48px;
+	height: 48px;
+	right: 20px;
+	top: 20px;
+	cursor: pointer;
+	background: transparent url(images/lightbox_nav_bg.png) no-repeat -96px 0px;
+}
+#xmmaLightboxNavClose:hover {
+	background: transparent url(images/lightbox_nav_bg.png) no-repeat -96px -48px;
+}
+#xmmaLightboxLoading {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	padding: 10px 20px;
+	border-radius: 8px;
+	color: #FFFFFF;
+	background: transparent url(images/lightbox_info_bg.png) repeat left top;
+}
+#xmmaLightboxInfo {
+	position: absolute;
+	max-width: 500px;
+	left: 20px;
+	bottom: 20px;
+	padding: 10px 20px;	
+	border-radius: 8px;
+	background: transparent url(images/lightbox_info_bg.png) repeat left top;
+}
+#xmmaLightboxTitle {
+	font-size: 14px;
+	color: #FFFFFF;
+	padding-bottom: 3px;
+}
+#xmmaLightboxDesc {
+	font-size: 11px;
+	color: #DDDDDD;
+	padding-bottom: 3px;
+}
+#xmmaLightboxCount {
+	font-size: 11px;
+	color: #DDDDDD;
+}
+
+/* VIDEO IFRAME */
+#mmpvideoiframe {
+	background: #202020;
+}
+
+
