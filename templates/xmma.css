@@ -38,14 +38,14 @@ div.xmmaVideo {
     
 	position: relative;
 	float: left;
-    padding: 10px 15px 20px 15px;
+    padding: 5px 15px 25px 15px;
 	overflow: hidden;
 }
 div.xmmaImage:hover div.xmmaImageDownload {
-	display: inline;
+	display: block;
 }
 div.xmmaImage:hover div.xmmaImageTitle {
-	/*display: inline;*/
+	display: none;
 }
 div.xmmaImage:hover span.xmmaImageOverlay {
 	background: transparent url(images/fullscreen_overlay.png) no-repeat center center;
@@ -73,7 +73,7 @@ span.xmmaVideoOverlay {
     
 	position: absolute;
 	display: block;
-    padding: 15px;
+    padding: 5px 15px;
 	top: 0;
 	left: 0;
 	cursor: pointer;
@@ -86,18 +86,18 @@ div.xmmaVideoTitle {
     box-sizing: content-box;
     
 	position: absolute;
-	top: -3px;
+	bottom: 5px;
 	left: 15px;
 	right: 15px;
 	text-align: center;
 	color: #000000;
 	font-size: 12px;
-	line-height: 18px;
+	line-height: 20px;
 	white-space: nowrap;
 	overflow: hidden;
 	text-overflow: ellipsis;
     
-    display: none;
+    display: block;
 }
 
 div.xmmaImageDownload {
@@ -107,7 +107,7 @@ div.xmmaImageDownload {
     
 	position: absolute;
 	display: none;
-	bottom: 0;
+	bottom: 5px;
 	left: 15px;
 	right: 15px;
 	text-align: center;
