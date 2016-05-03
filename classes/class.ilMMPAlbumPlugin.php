@@ -56,6 +56,13 @@ class ilMMPAlbumPlugin extends ilRepositoryObjectPlugin
 		
 		return null;
 	}
+	
+        // add ILIAS 5.1 compatibility
+        protected function uninstallCustom()
+        {
+                return false;
+        }
+
 }
 
 ?>
