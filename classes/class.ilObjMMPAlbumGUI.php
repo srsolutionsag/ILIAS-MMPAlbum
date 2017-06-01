@@ -17,10 +17,11 @@ include_once("./Services/Repository/classes/class.ilObjectPluginGUI.php");
  * - GUI classes used by this class are ilPermissionGUI (provides the rbac
  *   screens) and ilInfoScreenGUI (handles the info screen).
  *
- * @ilCtrl_isCalledBy ilObjMMPAlbumGUI: ilRepositoryGUI, ilAdministrationGUI,
- *                    ilObjPluginDispatchGUI
- * @ilCtrl_Calls      ilObjMMPAlbumGUI: ilPermissionGUI, ilInfoScreenGUI,
- *                    ilObjectCopyGUI, ilCommonActionDispatcherGUI
+ * @ilCtrl_isCalledBy ilObjMMPAlbumGUI: ilRepositoryGUI, ilAdministrationGUI
+ * @ilCtrl_isCalledBy ilObjMMPAlbumGUI: ilObjPluginDispatchGUI
+ * @ilCtrl_Calls      ilObjMMPAlbumGUI: ilPermissionGUI, ilInfoScreenGUI
+ * @ilCtrl_Calls      ilObjMMPAlbumGUI: ilCommonActionDispatcherGUI
+ * @ilCtrl_Calls      ilObjMMPAlbumGUI: ilObjectCopyGUI
  *
  */
 class ilObjMMPAlbumGUI extends ilObjectPluginGUI {
@@ -29,7 +30,14 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI {
 	const DISPLAY_SIZE = 1024;
 	const ALBUM_BY_LIST = 1;
 	const ALBUM_ID_MANUAL = 2;
+	/**
+	 * @var array
+	 */
 	private $albumIds = array();
+	/**
+	 * @var \ilObjMMPAlbum
+	 */
+	protected $object;
 
 
 	/**
@@ -56,7 +64,7 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI {
 	}
 
 
-	public function &executeCommand() {
+	public function executeCommand() {
 		global $tpl, $lng, $ilAccess, $ilCtrl;
 
 		// always display description if not creating
@@ -108,9 +116,13 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI {
 	}
 
 
+	/**
+	 * @param null $a_sub_type
+	 * @param null $a_sub_id
+	 *
+	 * @return \ilObjectListGUI
+	 */
 	protected function initHeaderAction($a_sub_type = null, $a_sub_id = null) {
-		global $ilSetting, $ilUser;
-
 		$lg = parent::initHeaderAction($a_sub_type, $a_sub_id);
 
 		return $lg;
@@ -118,9 +130,10 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI {
 
 
 	/**
+	 * @param string $cmd
 	 * Handles all commmands of this class, centralizes permission checks
 	 */
-	function performCommand($cmd) {
+	public function performCommand($cmd) {
 		// missed class handling
 		$next_class = $this->ctrl->getNextClass($this);
 
@@ -154,16 +167,20 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI {
 
 	/**
 	 * After object has been created -> jump to this command
+	 *
+	 * @return string
 	 */
-	function getAfterCreationCmd() {
+	public function getAfterCreationCmd() {
 		return "view";
 	}
 
 
 	/**
 	 * Get standard command
+	 *
+	 * @return string
 	 */
-	function getStandardCmd() {
+	public function getStandardCmd() {
 		return "view";
 	}
 
@@ -171,7 +188,7 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI {
 	/**
 	 * Set tabs
 	 */
-	function setTabs() {
+	public function setTabs() {
 		global $ilTabs, $ilCtrl, $ilAccess, $lng;
 
 		// tab for the "show content" command
@@ -192,6 +209,11 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI {
 	}
 
 
+	/**
+	 * @param string $a_new_type
+	 *
+	 * @return \ilPropertyFormGUI
+	 */
 	public function initCreateForm($a_new_type) {
 		// adds commands: 'save', 'cancel'
 		$this->form = parent::initCreateForm($a_new_type);
@@ -202,7 +224,7 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI {
 
 
 	private function initForm() {
-		global $ilCtrl, $ilUser;
+		global $ilUser;
 
 		$this->plugin->includeClass("class.ilObjMMPAlbum.php");
 
@@ -223,7 +245,7 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI {
 
 		// get albums that are readable by the current user
 		$select = null;
-		$albums = ilObjMMPAlbum::getAlbumList($userLogin);
+		$albums = ilObjMMPAlbum::getAlbumList($userLogin, $this->object->getAlbumId());
 		if ($albums !== false) {
 			$select = new ilSelectInputGUI($this->txt("album"), "album_id_select");
 			$albumOptions = array();
@@ -311,8 +333,6 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI {
 	 * @param        int $a_mode Edit Mode
 	 */
 	public function initPropertiesForm() {
-		global $ilCtrl;
-
 		// adds commands: 'update'
 		$this->form = parent::initEditForm();
 		$this->initForm();
@@ -322,7 +342,7 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI {
 	/**
 	 * Get values for edit properties form
 	 */
-	function getPropertiesValues() {
+	public function getPropertiesValues() {
 		$values["title"] = $this->object->getTitle();
 		$values["desc"] = $this->object->getLongDescription();
 		$values["online"] = $this->object->getOnline();
@@ -393,8 +413,8 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI {
 	/**
 	 * Saves or updates an album.
 	 *
-	 * @param ilObjMMPAlbum $album    The album to save or update.
-	 * @param ilPropertyFormGUI $form The submitted form to get the data from.
+	 * @param ilObjMMPAlbum     $album The album to save or update.
+	 * @param ilPropertyFormGUI $form  The submitted form to get the data from.
 	 */
 	private function saveOrUpdateAlbum(&$album, &$form) {
 		global $tpl, $lng, $ilCtrl;
@@ -688,5 +708,3 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI {
 		$tpl->addCss($this->plugin->getStyleSheetLocation("isotope.css"));
 	}
 }
-
-?>

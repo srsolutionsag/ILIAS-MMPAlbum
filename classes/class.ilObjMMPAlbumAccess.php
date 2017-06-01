@@ -29,8 +29,11 @@ class ilObjMMPAlbumAccess extends ilObjectPluginAccess {
 	 *
 	 * @return    boolean        true, if everything is ok
 	 */
-	function _checkAccess($a_cmd, $a_permission, $a_ref_id, $a_obj_id, $a_user_id = "") {
+	public function _checkAccess($a_cmd, $a_permission, $a_ref_id, $a_obj_id, $a_user_id = "") {
 		global $ilUser, $ilAccess;
+		/**
+		 * @var $ilAccess \ilAccessHandler
+		 */
 
 		if ($a_user_id == "") {
 			$a_user_id = $ilUser->getId();
@@ -77,5 +80,3 @@ class ilObjMMPAlbumAccess extends ilObjectPluginAccess {
 		return (int)$rec["update_mode"];
 	}
 }
-
-?>

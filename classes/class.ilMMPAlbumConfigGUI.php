@@ -103,8 +103,6 @@ class ilMMPAlbumConfigGUI extends ilPluginConfigGUI {
 	public function save() {
 		global $tpl, $lng, $ilCtrl, $ilDB;
 
-		$pl = $this->getPluginObject();
-
 		$form = $this->initConfigurationForm();
 		if ($form->checkInput()) {
 			foreach ($form->getItems() as $item) {
@@ -128,5 +126,3 @@ class ilMMPAlbumConfigGUI extends ilPluginConfigGUI {
 		}
 	}
 }
-
-?>

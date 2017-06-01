@@ -14,18 +14,15 @@ include_once "./Services/Repository/classes/class.ilObjectPluginListGUI.php";
  */
 class ilObjMMPAlbumListGUI extends ilObjectPluginListGUI {
 
-	/**
-	 * Init type
-	 */
-	function initType() {
+	public function initType() {
 		$this->setType("xmma");
 	}
 
 
 	/**
-	 * Get name of gui class handling the commands
+	 * @return string name of gui class handling the commands
 	 */
-	function getGuiClass() {
+	public function getGuiClass() {
 		return "ilObjMMPAlbumGUI";
 	}
 
@@ -33,7 +30,7 @@ class ilObjMMPAlbumListGUI extends ilObjectPluginListGUI {
 	/**
 	 * Get commands
 	 */
-	function initCommands() {
+	public function initCommands() {
 		global $lng;
 
 		return array(
@@ -57,7 +54,7 @@ class ilObjMMPAlbumListGUI extends ilObjectPluginListGUI {
 	 *
 	 * @see ilObjectListGUI::getAdditionalInformation()
 	 */
-	function getAdditionalInformation() {
+	public function getAdditionalInformation() {
 		// TODO: thumbnails!
 		return null;//"<strong>My Info</strong>";
 	}
@@ -72,8 +69,11 @@ class ilObjMMPAlbumListGUI extends ilObjectPluginListGUI {
 	 *                        "property" (string) => property name
 	 *                        "value" (string) => property value
 	 */
-	function getProperties() {
-		global $lng, $ilUser, $ilAccess;
+	public function getProperties() {
+		global $lng, $ilAccess;
+		/**
+		 * @var $ilAccess \ilAccessHandler
+		 */
 
 		$props = array();
 
@@ -107,5 +107,3 @@ class ilObjMMPAlbumListGUI extends ilObjectPluginListGUI {
 		return $props;
 	}
 }
-
-?>
