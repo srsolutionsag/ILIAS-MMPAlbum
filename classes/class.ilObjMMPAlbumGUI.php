@@ -3,64 +3,64 @@
 include_once("./Services/Repository/classes/class.ilObjectPluginGUI.php");
 
 /**
-* User Interface class for Multimedia Portal Album repository object.
-*
-* User interface classes process GET and POST parameter and call
-* application classes to fulfill certain tasks.
-*
-* @author Stefan Born <stefan.born@phzh.ch>
-*
-* $Id$
-*
-* Integration into control structure:
-* - The GUI class is called by ilRepositoryGUI
-* - GUI classes used by this class are ilPermissionGUI (provides the rbac
-*   screens) and ilInfoScreenGUI (handles the info screen).
-*
-* @ilCtrl_isCalledBy ilObjMMPAlbumGUI: ilRepositoryGUI, ilAdministrationGUI, ilObjPluginDispatchGUI
-* @ilCtrl_Calls ilObjMMPAlbumGUI: ilPermissionGUI, ilInfoScreenGUI, ilObjectCopyGUI, ilCommonActionDispatcherGUI
-*
-*/
-class ilObjMMPAlbumGUI extends ilObjectPluginGUI
-{
+ * User Interface class for Multimedia Portal Album repository object.
+ *
+ * User interface classes process GET and POST parameter and call
+ * application classes to fulfill certain tasks.
+ *
+ * @author            Stefan Born <stefan.born@phzh.ch>
+ *
+ * $Id$
+ *
+ * Integration into control structure:
+ * - The GUI class is called by ilRepositoryGUI
+ * - GUI classes used by this class are ilPermissionGUI (provides the rbac
+ *   screens) and ilInfoScreenGUI (handles the info screen).
+ *
+ * @ilCtrl_isCalledBy ilObjMMPAlbumGUI: ilRepositoryGUI, ilAdministrationGUI,
+ *                    ilObjPluginDispatchGUI
+ * @ilCtrl_Calls      ilObjMMPAlbumGUI: ilPermissionGUI, ilInfoScreenGUI,
+ *                    ilObjectCopyGUI, ilCommonActionDispatcherGUI
+ *
+ */
+class ilObjMMPAlbumGUI extends ilObjectPluginGUI {
+
 	const THUMB_SIZE = 160;
 	const DISPLAY_SIZE = 1024;
-
 	const ALBUM_BY_LIST = 1;
 	const ALBUM_ID_MANUAL = 2;
-
 	private $albumIds = array();
 
+
 	/**
-	* Initialisation
-	*/
-	protected function afterConstructor()
-	{
+	 * Initialisation
+	 */
+	protected function afterConstructor() {
 		// anything needed after object has been constructed
 		// - example: append my_id GET parameter to each request
 		//   $ilCtrl->saveParameter($this, array("my_id"));
 
-		if ($_SERVER['SERVER_NAME'] != "localhost")
+		if ($_SERVER['SERVER_NAME'] != "localhost") {
 			setcookie("ILIAS_MMP_Cookie", time(), false, "/", ".phzh.ch", false, true);
-		else
+		} else {
 			setcookie("ILIAS_MMP_Cookie", "localCookieTest", false, "/", false);
+		}
 	}
 
+
 	/**
-	* Get type.
-	*/
-	final function getType()
-	{
+	 * Get type.
+	 */
+	final function getType() {
 		return "xmma";
 	}
 
-	public function &executeCommand()
-	{
+
+	public function &executeCommand() {
 		global $tpl, $lng, $ilAccess, $ilCtrl;
 
 		// always display description if not creating
-		if (!$this->getCreationMode())
-		{
+		if (!$this->getCreationMode()) {
 			$props = array();
 			$canEdit = $ilAccess->checkAccess("write", "", $this->object->getRefId());
 
@@ -68,40 +68,38 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
 			$tpl->setDescription($this->object->getLongDescription());
 
 			// offline status
-			if ($canEdit && !ilObjMMPAlbumAccess::checkOnline($this->obj_id))
-			{
-				$props[] = array("property" => $lng->txt("status"), "value" => $lng->txt("offline"));
+			if ($canEdit && !ilObjMMPAlbumAccess::checkOnline($this->obj_id)) {
+				$props[] = array(
+					"property" => $lng->txt("status"),
+					"value"    => $lng->txt("offline"),
+				);
 			}
 
 			// if the user can edit the album, display the update type
-			if ($canEdit)
-			{
+			if ($canEdit) {
 				$updateMode = ilObjMMPAlbumAccess::getUpdateMode($this->obj_id);
-				if ($updateMode == ilObjMMPAlbum::UPDATE_MODE_AUTO)
-				{
+				if ($updateMode == ilObjMMPAlbum::UPDATE_MODE_AUTO) {
 					$updateModeText = $this->txt("update_mode_auto");
-				}
-				else
-				{
+				} else {
 					$updateModeText = $this->txt("update_mode_manual");
 					$lastUpdate = new ilDateTime($this->object->getLastUpdateDate(), IL_CAL_DATETIME);
 					$lastUpdateText = sprintf($this->txt("update_mode_last_update"), ilDatePresentation::formatDate($lastUpdate));
 
-					$updateNowText = sprintf(
-						"<a href=\"%s\">%s</a>",
-						$ilCtrl->getLinkTarget($this, "updateAlbum"),
-						$this->txt("update_now"));
+					$updateNowText = sprintf("<a href=\"%s\">%s</a>", $ilCtrl->getLinkTarget($this, "updateAlbum"), $this->txt("update_now"));
 
 					$updateModeText .= " ($lastUpdateText | $updateNowText)";
 				}
 
 				$props[] = array(
-					"property" => "<span class=\"light\">" . $this->txt("update_mode"),
-					"value" => "$updateModeText</span>");
+					"property" => "<span class=\"light\">"
+					              . $this->txt("update_mode"),
+					"value"    => "$updateModeText</span>",
+				);
 			}
 
-			if (count($props) > 0)
+			if (count($props) > 0) {
 				$tpl->setAlertProperties($props);
+			}
 
 			$this->addHeaderAction();
 		}
@@ -109,8 +107,8 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
 		parent::executeCommand();
 	}
 
-	protected function initHeaderAction($a_sub_type = null, $a_sub_id = null)
-	{
+
+	protected function initHeaderAction($a_sub_type = null, $a_sub_id = null) {
 		global $ilSetting, $ilUser;
 
 		$lg = parent::initHeaderAction($a_sub_type, $a_sub_id);
@@ -118,16 +116,15 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
 		return $lg;
 	}
 
+
 	/**
-	* Handles all commmands of this class, centralizes permission checks
-	*/
-	function performCommand($cmd)
-	{
+	 * Handles all commmands of this class, centralizes permission checks
+	 */
+	function performCommand($cmd) {
 		// missed class handling
 		$next_class = $this->ctrl->getNextClass($this);
 
-		switch($next_class)
-		{
+		switch ($next_class) {
 			case "ilcommonactiondispatchergui":
 				include_once("Services/Object/classes/class.ilCommonActionDispatcherGUI.php");
 				$gui = ilCommonActionDispatcherGUI::getInstanceFromAjaxCall();
@@ -135,8 +132,7 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
 				break;
 
 			default:
-				switch ($cmd)
-				{
+				switch ($cmd) {
 					// list all commands that need write permission here
 					case "edit":
 					case "update":
@@ -155,32 +151,31 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
 		}
 	}
 
+
 	/**
-	* After object has been created -> jump to this command
-	*/
-	function getAfterCreationCmd()
-	{
+	 * After object has been created -> jump to this command
+	 */
+	function getAfterCreationCmd() {
 		return "view";
 	}
 
+
 	/**
-	* Get standard command
-	*/
-	function getStandardCmd()
-	{
+	 * Get standard command
+	 */
+	function getStandardCmd() {
 		return "view";
 	}
 
+
 	/**
-	* Set tabs
-	*/
-	function setTabs()
-	{
+	 * Set tabs
+	 */
+	function setTabs() {
 		global $ilTabs, $ilCtrl, $ilAccess, $lng;
 
 		// tab for the "show content" command
-		if ($ilAccess->checkAccess("read", "", $this->object->getRefId()))
-		{
+		if ($ilAccess->checkAccess("read", "", $this->object->getRefId())) {
 			$ilTabs->addTab("content", $lng->txt("content"), $ilCtrl->getLinkTarget($this, "view"));
 		}
 
@@ -188,8 +183,7 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
 		$this->addInfoTab();
 
 		// tab displaying the properties
-		if ($ilAccess->checkAccess("write", "", $this->object->getRefId()))
-		{
+		if ($ilAccess->checkAccess("write", "", $this->object->getRefId())) {
 			$ilTabs->addTab("properties", $lng->txt("options"), $ilCtrl->getLinkTarget($this, "edit"));
 		}
 
@@ -197,16 +191,17 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
 		$this->addPermissionTab();
 	}
 
-	public function initCreateForm($a_new_type)
-	{
+
+	public function initCreateForm($a_new_type) {
 		// adds commands: 'save', 'cancel'
 		$this->form = parent::initCreateForm($a_new_type);
 		$this->initForm();
+
 		return $this->form;
 	}
 
-	private function initForm()
-	{
+
+	private function initForm() {
 		global $ilCtrl, $ilUser;
 
 		$this->plugin->includeClass("class.ilObjMMPAlbum.php");
@@ -217,33 +212,34 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
 
 		// get user login
 		$userLogin = $ilUser->getLogin();
-		if (strpos($userLogin, "@") === false)
-		{
+		if (strpos($userLogin, "@") === false) {
 			// students do not have a '.' in their name
-			if (strpos($userLogin, ".") === false)
+			if (strpos($userLogin, ".") === false) {
 				$userLogin .= "@stud.phzh.ch";
-			else
+			} else {
 				$userLogin .= "@phzh.ch";
+			}
 		}
 
 		// get albums that are readable by the current user
 		$select = null;
 		$albums = ilObjMMPAlbum::getAlbumList($userLogin);
-		if ($albums !== false)
-		{
+		if ($albums !== false) {
 			$select = new ilSelectInputGUI($this->txt("album"), "album_id_select");
 			$albumOptions = array();
 			$albumOptions["0"] = " - Album auswählen -";
-			foreach ($albums->AlbumList->Album as $album)
-			{
+			foreach ($albums->AlbumList->Album as $album) {
 				// TODO: change for scrambled IDs
 				$value = "" . $album->Id; // urlencode($album->ScrambleId)
 				//$value = urlencode($album->ScrambleId);
 
-				if ($album->Cat == "myAlbums")
-					$optionText = $album->Title . " (Bilder: " . $album->Count . ")";
-				else
-					$optionText = $album->Title . " (Bilder: " . $album->Count . " | " . $album->Owner . ")";
+				if ($album->Cat == "myAlbums") {
+					$optionText = $album->Title . " (Bilder: " . $album->Count
+					              . ")";
+				} else {
+					$optionText = $album->Title . " (Bilder: " . $album->Count
+					              . " | " . $album->Owner . ")";
+				}
 
 				$albumOptions[$value] = $optionText;
 				$this->albumIds[] = $value;
@@ -258,8 +254,7 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
 		$ti->setInfo($this->txt("album_id_info"));
 
 		// album list defined?
-		if ($select)
-		{
+		if ($select) {
 			$rb = new ilRadioGroupInputGUI($this->txt("album_id"), "album_id_option");
 			$rb->setRequired(true);
 			$rb->setValue(self::ALBUM_BY_LIST);
@@ -275,9 +270,7 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
 			$rb->addOption($rbo);
 
 			$this->form->addItem($rb);
-		}
-		else
-		{
+		} else {
 			$ti->setTitle($this->txt("album_id"));
 			$ti->setRequired(true);
 			$this->form->addItem($ti);
@@ -311,13 +304,13 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
 		$this->form->addItem($rb);
 	}
 
+
 	/**
-	* Init  form.
-	*
-	* @param        int        $a_mode        Edit Mode
-	*/
-	public function initPropertiesForm()
-	{
+	 * Init  form.
+	 *
+	 * @param        int $a_mode Edit Mode
+	 */
+	public function initPropertiesForm() {
 		global $ilCtrl;
 
 		// adds commands: 'update'
@@ -325,11 +318,11 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
 		$this->initForm();
 	}
 
+
 	/**
-	* Get values for edit properties form
-	*/
-	function getPropertiesValues()
-	{
+	 * Get values for edit properties form
+	 */
+	function getPropertiesValues() {
 		$values["title"] = $this->object->getTitle();
 		$values["desc"] = $this->object->getLongDescription();
 		$values["online"] = $this->object->getOnline();
@@ -339,10 +332,11 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
 		$values["album_id_select"] = urlencode($albumId);
 
 		// set option for album selection
-		if (in_array(urlencode($albumId), $this->albumIds))
+		if (in_array(urlencode($albumId), $this->albumIds)) {
 			$values["album_id_option"] = self::ALBUM_BY_LIST;
-		else
+		} else {
 			$values["album_id_option"] = self::ALBUM_ID_MANUAL;
+		}
 
 		$values["update_mode"] = $this->object->getUpdateMode();
 
@@ -350,12 +344,13 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
 		$this->form->setValuesByArray($values);
 	}
 
+
 	/**
 	 * (non-PHPdoc)
+	 *
 	 * @see ilObject2GUI::edit()
 	 */
-	public function edit()
-	{
+	public function edit() {
 		global $tpl, $ilTabs;
 
 		$ilTabs->activateTab("properties");
@@ -364,12 +359,13 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
 		$tpl->setContent($this->form->getHTML());
 	}
 
+
 	/**
 	 * (non-PHPdoc)
+	 *
 	 * @see ilObject2GUI::save()
 	 */
-	public function save()
-	{
+	public function save() {
 		$new_type = $_REQUEST["new_type"];
 		$this->ctrl->setParameter($this, "new_type", $new_type);
 
@@ -378,12 +374,13 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
 		$this->saveOrUpdateAlbum($album, $form);
 	}
 
+
 	/**
 	 * (non-PHPdoc)
+	 *
 	 * @see ilObject2GUI::update()
 	 */
-	public function update()
-	{
+	public function update() {
 		global $ilTabs;
 
 		$ilTabs->activateTab("properties");
@@ -392,18 +389,17 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
 		$this->saveOrUpdateAlbum($this->object, $this->form);
 	}
 
+
 	/**
 	 * Saves or updates an album.
 	 *
-	 * @param ilObjMMPAlbum $album The album to save or update.
+	 * @param ilObjMMPAlbum $album    The album to save or update.
 	 * @param ilPropertyFormGUI $form The submitted form to get the data from.
 	 */
-	private function saveOrUpdateAlbum(&$album, &$form)
-	{
+	private function saveOrUpdateAlbum(&$album, &$form) {
 		global $tpl, $lng, $ilCtrl;
 
-		if ($form->checkInput())
-		{
+		if ($form->checkInput()) {
 			$hasError = false;
 
 			$albumIdOption = $form->getInput("album_id_option");
@@ -411,27 +407,23 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
 			$albumId = $form->getInput("album_id");
 
 			// from list selected?
-			if ($albumIdOption == self::ALBUM_BY_LIST)
-			{
+			if ($albumIdOption == self::ALBUM_BY_LIST) {
 				// is an entry selected?
-				if ($albumIdSelected != "0")
-				{
+				if ($albumIdSelected != "0") {
 					$albumId = $albumIdSelected;
-				}
-				else
-				{
+				} else {
 					$idInput = $form->getItemByPostVar("album_id_select");
 					$idInput->setAlert($this->txt("selection_required"));
 					ilUtil::sendFailure($this->lng->txt("form_input_not_valid"), false);
 					$hasError = true;
 				}
-			}
-			else if (trim($albumId) == "")
-			{
-				$idInput = $form->getItemByPostVar("album_id");
-				$idInput->setAlert($this->lng->txt("msg_input_is_required"));
-				ilUtil::sendFailure($this->lng->txt("form_input_not_valid"), false);
-				$hasError = true;
+			} else {
+				if (trim($albumId) == "") {
+					$idInput = $form->getItemByPostVar("album_id");
+					$idInput->setAlert($this->lng->txt("msg_input_is_required"));
+					ilUtil::sendFailure($this->lng->txt("form_input_not_valid"), false);
+					$hasError = true;
+				}
 			}
 
 			$updateMode = $form->getInput("update_mode");
@@ -440,23 +432,20 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
 			$isOnline = $form->getInput("online");
 
 			// download XML if no error yet
-			if (!$hasError)
-			{
+			if (!$hasError) {
 				$albumXml = ilObjMMPAlbum::downloadAlbumContent($albumId);
-				if ($albumXml === false)
-				{
-					$idInput = $form->getItemByPostVar($albumIdOption == self::ALBUM_BY_LIST ? "album_id_select" : "album_id");
+				if ($albumXml === false) {
+					$idInput = $form->getItemByPostVar($albumIdOption
+					                                   == self::ALBUM_BY_LIST ? "album_id_select" : "album_id");
 					$idInput->setAlert($this->txt("album_not_found"));
 					$hasError = true;
 				}
 			}
 
-			if (!$hasError)
-			{
+			if (!$hasError) {
 				$createAlbum = !is_object($album);
 
-				if ($createAlbum)
-				{
+				if ($createAlbum) {
 					$this->ctrl->setParameter($this, "new_type", "");
 					$album = new ilObjMMPAlbum();
 					$this->object = $album;
@@ -464,18 +453,20 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
 
 				// description not defined? try to load from XML
 				$albumObj = @simplexml_load_string($albumXml);
-				if (albumObj !== false)
-				{
-					if (trim($title) == "")
+				if (albumObj !== false) {
+					if (trim($title) == "") {
 						$title = $albumObj->Title;
+					}
 
-					if (trim($desc) == "")
+					if (trim($desc) == "") {
 						$desc = $albumObj->Description;
+					}
 				}
 
 				// don't save XML if auto updating
-				if ($updateMode == ilObjMMPAlbum::UPDATE_MODE_AUTO)
+				if ($updateMode == ilObjMMPAlbum::UPDATE_MODE_AUTO) {
 					$albumXml = null;
+				}
 
 				// set album properties
 				$album->setTitle($title);
@@ -486,24 +477,20 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
 				$album->setAlbumXml($albumXml);
 
 				// create or update
-				if ($createAlbum)
-				{
+				if ($createAlbum) {
 					$album->create();
 					$this->putObjectInTree($album, $_GET["ref_id"]);
 					$this->afterSave($album);
+
 					return;
-				}
-				else
-				{
+				} else {
 					$album->update();
 					ilUtil::sendSuccess($lng->txt("msg_obj_modified"), true);
 					$ilCtrl->redirect($this, "edit");
+
 					return;
 				}
-			}
-			else
-			{
-
+			} else {
 			}
 		}
 
@@ -511,22 +498,20 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
 		$tpl->setContent($form->getHtml());
 	}
 
-	private function updateAlbum()
-	{
+
+	private function updateAlbum() {
 		global $ilCtrl;
 
 		$albumId = $this->object->getAlbumId();
 		$albumXml = ilObjMMPAlbum::downloadAlbumContent($albumId);
-		if ($albumXml !== false)
-		{
+		if ($albumXml !== false) {
 			$this->object->setAlbumXml($albumXml);
-			if ($this->object->update())
+			if ($this->object->update()) {
 				ilUtil::sendSuccess($this->txt("update_successful"), true);
-			else
+			} else {
 				ilUtil::sendFailure($this->txt("update_failed"), true);
-		}
-		else
-		{
+			}
+		} else {
 			ilUtil::sendFailure($this->txt("album_not_found"), false);
 		}
 
@@ -534,11 +519,11 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
 		$ilCtrl->redirect($this, $this->getStandardCmd());
 	}
 
+
 	/**
-	* Show album
-	*/
-	public function view()
-	{
+	 * Show album
+	 */
+	public function view() {
 		global $tpl, $ilTabs, $ilUtil;
 
 		// permanent link
@@ -547,8 +532,7 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
 		$ilTabs->activateTab("content");
 
 		$album = $this->object->getAlbum();
-		if ($album !== false)
-		{
+		if ($album !== false) {
 			// load prerequisites
 			$this->loadJavaScript();
 			$this->loadCss();
@@ -564,67 +548,67 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
 			$baseUrl = ilMMPAlbumPlugin::getBaseUrl();
 
 			$mediumId = 0;
-			foreach ($album->Media->Medium as $medium)
-			{
+			foreach ($album->Media->Medium as $medium) {
 				// everything else than picture and video is not supported!
-				if ($medium->MediaType != "Picture" && $medium->MediaType != "Video")
+				if ($medium->MediaType != "Picture"
+				    && $medium->MediaType != "Video"
+				) {
 					continue;
+				}
 
 				$thumbImg = null;
 				$displayImg = null;
 
 				// get the desired thumb and display size
 				$thumbCount = 0;
-				foreach ($medium->Thumbs->Thumb as $thumb)
-				{
-					if ($thumb->Size == self::THUMB_SIZE)
-					{
+				foreach ($medium->Thumbs->Thumb as $thumb) {
+					if ($thumb->Size == self::THUMB_SIZE) {
 						$thumbImg = $thumb;
 						$thumbImg->Url = $baseUrl . $thumbImg->Url;
+					} else {
+						if ($thumb->Size == self::DISPLAY_SIZE) {
+							$displayImg = $thumb;
+						}
 					}
-					else if ($thumb->Size == self::DISPLAY_SIZE)
-					{
-						$displayImg = $thumb;
-					}
-					$thumbCount++;
+					$thumbCount ++;
 				}
 
 				// thumbnail not found?
-				if ($thumbImg == null)
-				{
-					if ($thumbCount > 0)
-					{
+				if ($thumbImg == null) {
+					if ($thumbCount > 0) {
 						$thumbImg = $medium->Thumbs->Thumb[0];
 
 						// adjust size
 						$thumbImg->Width = self::THUMB_SIZE;
 						$thumbImg->Height = self::THUMB_SIZE;
-					}
-					else
-					{
+					} else {
 						$thumbImg = new stdClass();
 						$thumbImg->Width = self::THUMB_SIZE;
 						$thumbImg->Height = self::THUMB_SIZE;
 						$thumbImg->Size = self::THUMB_SIZE;
-						$thumbImg->Url = "./Customizing/global/plugins/Services/Repository/RepositoryObject/MMPAlbum/templates/images/" . strtolower($medium->MediaType) . ".png";
+						$thumbImg->Url = "./Customizing/global/plugins/Services/Repository/RepositoryObject/MMPAlbum/templates/images/"
+						                 . strtolower($medium->MediaType)
+						                 . ".png";
 					}
 				}
 
 				// display image not found? take original
-				if ($displayImg == null)
+				if ($displayImg == null) {
 					$displayImg = $medium;
+				}
 
 				// get original download link
-				$downloadLink = $baseUrl . $medium->Url; //$this->plugin->getDirectory() . "/download.php?img=" . rawurlencode($baseUrl . $medium->Url) . "&name=" . rawurlencode($medium->Title);
+				$downloadLink = $baseUrl
+				                . $medium->Url; //$this->plugin->getDirectory() . "/download.php?img=" . rawurlencode($baseUrl . $medium->Url) . "&name=" . rawurlencode($medium->Title);
 
 				$mediaTpl->setCurrentBlock("medium");
-				if ($medium->MediaType == "Picture")
-				{
+				if ($medium->MediaType == "Picture") {
 					$imageTpl = $this->plugin->getTemplate("tpl.image_thumb.html");
 
 					$imageTpl->setVariable("DATA_ID", $mediumId);
 
-					$imageTpl->setVariable("IMG_LINK", $baseUrl . $displayImg->Url);
+					$imageTpl->setVariable("IMG_LINK", $baseUrl
+					                                   . $displayImg->Url);
 					$imageTpl->setVariable("IMG_ORIG_LINK", $downloadLink);
 					$imageTpl->setVariable("IMG_TITLE", $medium->Title);
 					$imageTpl->setVariable("IMG_DESC", $medium->Description);
@@ -634,16 +618,16 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
 					$imageTpl->setVariable("THUMB_WIDTH", $thumbImg->Width);
 					$imageTpl->setVariable("THUMB_HEIGHT", $thumbImg->Height);
 
-					$imageTpl->setVariable("THUMB_OFFSET_TOP", ($thumbImg->Size - $thumbImg->Height) / 2);
+					$imageTpl->setVariable("THUMB_OFFSET_TOP", ($thumbImg->Size
+					                                            - $thumbImg->Height)
+					                                           / 2);
 
 					$imageTpl->setVariable("DOWNLOAD_TEXT", $this->txt("download"));
 					$imageTpl->setVariable("IMG_DOWNLOAD_LINK", $downloadLink);
 
 					// add to list template
 					$mediaTpl->setVariable("MEDIUM", $imageTpl->get());
-				}
-				else
-				{
+				} else {
 					$videoTpl = $this->plugin->getTemplate("tpl.video_thumb.html");
 
 					$videoTpl->setVariable("DATA_ID", $mediumId);
@@ -661,7 +645,7 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
 				}
 				$mediaTpl->parseCurrentBlock();
 
-				$mediumId++;
+				$mediumId ++;
 			}
 
 			// get the album template
@@ -671,40 +655,38 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
 
 			// write content
 			$tpl->setContent($albumTpl->get());
-		}
-		else
-		{
+		} else {
 			$tpl->setContent($this->txt("load_album_error"));
 		}
 	}
 
-	private function loadJavaScript()
-	{
+
+	private function loadJavaScript() {
 		global $tpl, $https;
 
-		if(version_compare(ILIAS_VERSION_NUMERIC, '4.2.0') >= 0)
-		{
+		if (version_compare(ILIAS_VERSION_NUMERIC, '4.2.0') >= 0) {
 			include_once 'Services/jQuery/classes/class.iljQueryUtil.php';
 			iljQueryUtil::initjQuery();
-		}
-		else
-		{
-			if($https->isDetected())
+		} else {
+			if ($https->isDetected()) {
 				$tpl->addJavaScript('https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js');
-			else
+			} else {
 				$tpl->addJavaScript('http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js');
+			}
 		}
 
 		// load our java scripts
-		$tpl->addJavaScript($this->plugin->getDirectory() . "/js/jquery.isotope.min.js");
+		$tpl->addJavaScript($this->plugin->getDirectory()
+		                    . "/js/jquery.isotope.min.js");
 		$tpl->addJavaScript($this->plugin->getDirectory() . "/js/xmma.js");
 	}
 
-	private function loadCss()
-	{
+
+	private function loadCss() {
 		global $tpl;
 		$tpl->addCss($this->plugin->getStyleSheetLocation("xmma.css"));
 		$tpl->addCss($this->plugin->getStyleSheetLocation("isotope.css"));
 	}
 }
+
 ?>
