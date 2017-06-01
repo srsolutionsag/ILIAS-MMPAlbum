@@ -5,225 +5,225 @@ include_once("./Services/Repository/classes/class.ilObjectPlugin.php");
 /**
  * Application class for Multimedia Portal Album plugin.
  *
- * @author Stefan Born <stefan.born@phzh.ch>
+ * @author  Stefan Born <stefan.born@phzh.ch>
  * @version $Id$
  *
  */
-class ilObjMMPAlbum extends ilObjectPlugin
-{
-	private $online = false;
-	private $album_id = null;
-	private $update_mode = self::UPDATE_MODE_AUTO;
-	private $album_xml = null;
-	
+class ilObjMMPAlbum extends ilObjectPlugin {
+
 	const UPDATE_MODE_AUTO = 0;
 	const UPDATE_MODE_MANUAL = 1;
-	
 	/**
-	* Constructor
-	*
-	* @access	public
-	*/
-	function __construct($a_ref_id = 0)
-	{
-		parent::__construct($a_ref_id);
-	}	
+	 * @var bool
+	 */
+	private $online = false;
+	/**
+	 * @var int
+	 */
+	private $album_id = null;
+	/**
+	 * @var int
+	 */
+	private $update_mode = self::UPDATE_MODE_AUTO;
+	/**
+	 * @var string
+	 */
+	private $album_xml = null;
+
 
 	/**
-	* Get type.
-	*/
-	final function initType()
-	{
+	 * ilObjMMPAlbum constructor.
+	 *
+	 * @param int $a_ref_id
+	 */
+	public function __construct($a_ref_id = 0) {
+		parent::__construct($a_ref_id);
+	}
+
+
+	public final function initType() {
 		$this->setType("xmma");
 	}
-	
+
+
 	/**
-	* Create object
-	*/
-	function doCreate()
-	{
+	 * Create object
+	 */
+	public function doCreate() {
 		global $ilDB;
-		
-		$ilDB->insert(
-			"rep_robj_xmma_data", 
-			array(
-				"id" => array("integer", $this->getId()),
-				"is_online" => array("integer", $this->getOnline()),
-				"album_url" => array("text", $this->getAlbumId()),
-				"update_mode" => array("integer", $this->getUpdateMode()),
-				"album_xml" => array("clob", $this->getAlbumXml())
-			)
-		);
+
+		$ilDB->insert("rep_robj_xmma_data", array(
+			"id"          => array( "integer", $this->getId() ),
+			"is_online"   => array( "integer", $this->getOnline() ),
+			"album_url"   => array( "text", $this->getAlbumId() ),
+			"update_mode" => array( "integer", $this->getUpdateMode() ),
+			"album_xml"   => array( "clob", $this->getAlbumXml() ),
+		));
 	}
-	
+
+
 	/**
-	* Read data from db
-	*/
-	function doRead()
-	{
+	 * Read data from db
+	 */
+	public function doRead() {
 		global $ilDB;
-		
-		$set = $ilDB->queryF(
-			"SELECT * FROM rep_robj_xmma_data WHERE id=%s", 
-			array("integer"), 
-			array($this->getId()));
-		
-		while ($rec = $ilDB->fetchAssoc($set))
-		{
+
+		$set = $ilDB->queryF("SELECT * FROM rep_robj_xmma_data WHERE id=%s", array( "integer" ), array( $this->getId() ));
+
+		while ($rec = $ilDB->fetchAssoc($set)) {
 			$this->setOnline($rec["is_online"]);
 			$this->setAlbumId($rec["album_url"]);
 			$this->setUpdateMode($rec["update_mode"]);
 			$this->setAlbumXml($rec["album_xml"]);
 		}
 	}
-	
+
+
 	/**
-	* Update data
-	*/
-	function doUpdate()
-	{
+	 * Update data
+	 */
+	public function doUpdate() {
 		global $ilDB;
-		
-		$ilDB->update(
-			"rep_robj_xmma_data", 
-			array(
-				"is_online" => array("integer", $this->getOnline()),
-				"album_url" => array("text", $this->getAlbumId()),
-				"update_mode" => array("integer", $this->getUpdateMode()),
-				"album_xml" => array("clob", $this->getAlbumXml())
-			),
-			array("id" => array("integer", $this->getId()))
-		);
+
+		$ilDB->update("rep_robj_xmma_data", array(
+			"is_online"   => array( "integer", $this->getOnline() ),
+			"album_url"   => array( "text", $this->getAlbumId() ),
+			"update_mode" => array( "integer", $this->getUpdateMode() ),
+			"album_xml"   => array( "clob", $this->getAlbumXml() ),
+		), array( "id" => array( "integer", $this->getId() ) ));
 	}
-	
+
+
 	/**
-	* Delete data from db
-	*/
-	function doDelete()
-	{
+	 * Delete data from db
+	 */
+	public function doDelete() {
 		global $ilDB;
-		
-		$ilDB->manipulateF(
-		    "DELETE FROM rep_robj_xmma_data WHERE id=%s",
-			array("integer"), 
-			array($this->getId()));
-		
+
+		$ilDB->manipulateF("DELETE FROM rep_robj_xmma_data WHERE id=%s", array( "integer" ), array( $this->getId() ));
 	}
-	
+
+
 	/**
-	* Do Cloning
-	*/
-	function doCloneObject(ilObjMMPAlbum $new_obj, $a_target_id, $a_copy_id)
-	{
-		global $ilDB;
-		
+	 * @param ilObjMMPAlbum $new_obj
+	 * @param int           $a_target_id
+	 * @param int           $a_copy_id
+	 */
+	public function doCloneObject($new_obj, $a_target_id, $a_copy_id = null) {
+		/**
+		 * @var $new_obj ilObjMMPAlbum
+		 */
+		assert(is_a($new_obj, 'ilObjMMPAlbum'));
+
 		$new_obj->setOnline($this->getOnline());
 		$new_obj->setAlbumId($this->getAlbumId());
 		$new_obj->setUpdateMode($this->getUpdateMode());
 		$new_obj->setAlbumXml($this->getAlbumXml());
 		$new_obj->update();
 	}
-	
+
+
 	/**
-	* Set if online
-	*
-	* @param boolean Online
-	*/
-	function setOnline($a_val)
-	{
-		$this->online = $a_val;
+	 * Set if online
+	 *
+	 * @param boolean $is_online
+	 */
+	public function setOnline($is_online) {
+		$this->online = $is_online;
 	}
-	
+
+
 	/**
-	* Get if online
-	*
-	* @return boolean Online
-	*/
-	function getOnline()
-	{
+	 * Get if online
+	 *
+	 * @return boolean Online
+	 */
+	public function getOnline() {
 		return $this->online;
 	}
-	
+
+
 	/**
-	* Set album ID
-	*
-	* @param string Album URL
-	*/
-	function setAlbumId($a_val)
-	{
-		$this->album_id = $a_val;
+	 * Set album ID
+	 *
+	 * @param string $album_id URL
+	 */
+	public function setAlbumId($album_id) {
+		$this->album_id = $album_id;
 	}
-	
+
+
 	/**
-	* Get album ID
-	*
-	* @return string Album URL
-	*/
-	function getAlbumId()
-	{
+	 * Get album ID
+	 *
+	 * @return string Album URL
+	 */
+	public function getAlbumId() {
 		return $this->album_id;
 	}
-	
+
+
 	/**
 	 * Sets the update mode
-	 * 
+	 *
 	 * @param integer $a_val Update mode
 	 */
-	function setUpdateMode($a_val)
-	{
+	public function setUpdateMode($a_val) {
 		$this->update_mode = $a_val;
 	}
-	
+
+
 	/**
 	 * Get the update mode
-	 * 
+	 *
 	 * @return string Update mode
 	 */
-	function getUpdateMode()
-	{
+	public function getUpdateMode() {
 		return $this->update_mode;
 	}
-	
+
+
 	/**
 	 * Sets the album XML definition
-	 * 
+	 *
 	 * @param string $a_val Album XML definition
 	 */
-	function setAlbumXml($a_val)
-	{
+	public function setAlbumXml($a_val) {
 		$this->album_xml = $a_val;
 	}
-	
+
+
 	/**
 	 * Gets the album XML definition
-	 * 
+	 *
 	 * @return string Album XML definition
 	 */
-	function getAlbumXml()
-	{
+	public function getAlbumXml() {
 		return $this->album_xml;
 	}
-	
+
+
 	/**
 	 * Gets the album represented by the XML definition.
 	 */
-	function getAlbum()
-	{
+	public function getAlbum() {
 		$xml = $this->getAlbumDefinition();
-		if ($xml !== false)
-		{
+		if ($xml !== false) {
 			$useInternalErrors = libxml_use_internal_errors(true);
 
 			$xmlObj = simplexml_load_string($xml);
-			if ($xmlObj !== false)
-			{
+			if ($xmlObj !== false) {
 				libxml_use_internal_errors($useInternalErrors);
+
 				return $xmlObj;
 			}
 
 			// trace error
-			foreach(libxml_get_errors() as $error)
-				$errorText .= "<br/> - Line " . $error->line . ": " . $error->message;
+			$errorText = '';
+			foreach (libxml_get_errors() as $error) {
+				$errorText .= "<br/> - Line " . $error->line . ": "
+				              . $error->message;
+			}
 
 			ilUtil::sendFailure(sprintf($this->txt("xml_album_error"), $this->getAlbumId(), $errorText), false);
 
@@ -233,121 +233,129 @@ class ilObjMMPAlbum extends ilObjectPlugin
 
 		return false;
 	}
-	
-	static function getAlbumList($userEmail)
-	{
+
+
+	/**
+	 * @param      $userEmail
+	 * @param null $album_id
+	 *
+	 * @return bool|\SimpleXMLElement
+	 */
+	public static function getAlbumList($userEmail, $album_id = null) {
 		$xml = self::downloadAlbumListXml($userEmail);
-		if ($xml !== false)
-		{
+		if ($xml !== false) {
 			$useInternalErrors = libxml_use_internal_errors(true);
-		
+
 			$xmlObj = simplexml_load_string($xml);
-			if ($xmlObj !== false)
-			{
+			if ($xmlObj !== false) {
 				libxml_use_internal_errors($useInternalErrors);
+
 				return $xmlObj;
 			}
-			
+
 			// trace error
-			foreach(libxml_get_errors() as $error)
-				$errorText .= "<br/> - Line " . $error->line . ": " . $error->message;
-			
-			ilUtil::sendFailure(sprintf($this->txt("xml_album_error"), $this->getAlbumId(), $errorText), false);
-				
+			$errorText = '';
+			foreach (libxml_get_errors() as $error) {
+				$errorText .= "<br/> - Line " . $error->line . ": "
+				              . $error->message;
+			}
+
+			ilUtil::sendFailure(sprintf(ilMMPAlbumPlugin::getInstance()->txt("xml_album_error"), $album_id, $errorText), false);
+
 			libxml_clear_errors();
 			libxml_use_internal_errors($useInternalErrors);
 		}
+
 		return false;
 	}
+
 
 	/**
 	 * Downloads the album content from the Multimedia-Portal.
-	 * 
+	 *
 	 * @param string $album_id The album id.
+	 *
+	 * @return bool
 	 */
-	static function downloadAlbumContent($album_id)
-	{
+	static function downloadAlbumContent($album_id) {
 		$url = self::buildAlbumXmlUrl($album_id);
-			
+
 		// load url content
 		$xml = @file_get_contents($url);
-		if ($xml !== false && trim($xml) != "")
-		{
+		if ($xml !== false && trim($xml) != "") {
 			return $xml;
-		}
-		else
-		{
-			if (isset($http_response_header))
-			{
+		} else {
+			if (isset($http_response_header)) {
 				$errorText = $http_response_header[0];
-			}
-			else
-			{
+			} else {
 				$lastError = error_get_last();
 				$errorText = $lastError["message"];
 			}
-			
+
 			// needed for getting the texts
 			$album = new ilObjMMPAlbum();
-			if (strpos($errorText, "404") > 0)
+			if (strpos($errorText, "404") > 0) {
 				ilUtil::sendFailure($album->txt("album_not_found"), false);
-			else
+			} else {
 				ilUtil::sendFailure(sprintf($album->txt("request_album_error"), $album_id, $errorText), false);
-				
+			}
+
 			return false;
 		}
 	}
-	
+
+
 	/**
 	 * Builds an URL to download an album definition.
-	 * 
+	 *
 	 * @param string $album_id The album id.
+	 *
+	 * @return string
 	 */
-	static function buildAlbumXmlUrl($album_id)
-	{
+	static function buildAlbumXmlUrl($album_id) {
 		$urlFormat = ilMMPAlbumPlugin::getAlbumXmlUrlFormat();
-	
+
 		// replace placeholders with real values
 		$url = str_replace("[ID]", $album_id, $urlFormat);
 		$url = str_replace("[SID]", ilMMPAlbumPlugin::getSecretKey(), $url);
-	
+
 		return $url;
 	}
+
 
 	/**
 	 * Gets the album definition depending on the update mode.
 	 */
-	private function getAlbumDefinition()
-	{
-		if ($this->getUpdateMode() == self::UPDATE_MODE_AUTO)
-		{
+	private function getAlbumDefinition() {
+		if ($this->getUpdateMode() == self::UPDATE_MODE_AUTO) {
 			return self::downloadAlbumContent($this->getAlbumId());
-		}
-		else
-		{
+		} else {
 			$xml = $this->getAlbumXml();
-			if ($xml != null)
+			if ($xml != null) {
 				return $xml;
-			else
+			} else {
 				return false;
+			}
 		}
 	}
-	
-	static function downloadAlbumListXml($userEmail)
-	{
+
+
+	/**
+	 * @param $userEmail
+	 *
+	 * @return bool|string
+	 */
+	static function downloadAlbumListXml($userEmail) {
 		$urlFormat = ilMMPAlbumPlugin::getAlbumListUrlFormat();
 		$url = str_replace("[LOGIN]", $userEmail, $urlFormat);
 		$url = str_replace("[SID]", ilMMPAlbumPlugin::getSecretKey(), $url);
-		
+
 		$xml = @file_get_contents($url);
-		if ($xml !== false && trim($xml) != "")
-		{
+		if ($xml !== false && trim($xml) != "") {
 			return $xml;
-		}
-		else
-		{
+		} else {
 			return false;
 		}
 	}
 }
-?>
+
