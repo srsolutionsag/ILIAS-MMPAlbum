@@ -37,7 +37,7 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI {
 	/**
 	 * @var \ilObjMMPAlbum
 	 */
-	protected $object;
+	public $object;
 
 
 	/**
@@ -245,7 +245,8 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI {
 
 		// get albums that are readable by the current user
 		$select = null;
-		$albums = ilObjMMPAlbum::getAlbumList($userLogin, $this->object->getAlbumId());
+		$album_id = ($this->object ? $this->object->getAlbumId() : null);
+		$albums = ilObjMMPAlbum::getAlbumList($userLogin, $album_id);
 		if ($albums !== false) {
 			$select = new ilSelectInputGUI($this->txt("album"), "album_id_select");
 			$albumOptions = array();
