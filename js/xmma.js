@@ -112,10 +112,10 @@ function onMediumLoaded($medium)
     if ($medium.attr("data-id") != currentMediumId)
     	return;
     
-    // set the natural width & height (Bugfix for IE7)
-    $medium.prop("naturalWidth", $medium.prop("width"));
-    $medium.prop("naturalHeight", $medium.prop("height"));
-    
+    // set the natural width & height (Bugfix for IE7) - Bugfix removed by PSM, 06.08.18 now its just "Width" not "NaturalWidth"
+	// $medium.prop("NaturalWidth", $medium.prop("width"));
+	// $medium.prop("NaturalHeight", $medium.prop("height"));
+	
     // set image css
     setImageBounds($medium);
     
@@ -147,6 +147,12 @@ function setImageBounds($image)
     var parentWidth = $parent.prop("clientWidth");
     var parentHeight = $parent.prop("clientHeight");
     
+	if ($image.is("iframe"))
+	{
+		width = $image.prop("width");
+		height = $image.prop("height");   
+	}
+	
     // image larger than parent? adjust it
     if (width > parentWidth || height > parentHeight)
 	{
