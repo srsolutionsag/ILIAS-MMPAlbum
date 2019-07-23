@@ -69,21 +69,21 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
 
     public function executeCommand()
     {
-        global $tpl, $lng, $ilAccess, $ilCtrl;
+        global $DIC;
 
         // always display description if not creating
         if (!$this->getCreationMode()) {
             $props = array();
-            $canEdit = $ilAccess->checkAccess("write", "", $this->object->getRefId());
+            $canEdit = $DIC->access()->checkAccess("write", "", $this->object->getRefId());
 
             // description
-            $tpl->setDescription($this->object->getLongDescription());
+            $DIC->ui()->mainTemplate()->setDescription($this->object->getLongDescription());
 
             // offline status
             if ($canEdit && !ilObjMMPAlbumAccess::checkOnline($this->obj_id)) {
                 $props[] = array(
-                    "property" => $lng->txt("status"),
-                    "value"    => $lng->txt("offline"),
+                    "property" => $DIC->language()->txt("status"),
+                    "value"    => $DIC->language()->txt("offline"),
                 );
             }
 
@@ -97,7 +97,7 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
                     $lastUpdate = new ilDateTime($this->object->getLastUpdateDate(), IL_CAL_DATETIME);
                     $lastUpdateText = sprintf($this->txt("update_mode_last_update"), ilDatePresentation::formatDate($lastUpdate));
 
-                    $updateNowText = sprintf("<a href=\"%s\">%s</a>", $ilCtrl->getLinkTarget($this, "updateAlbum"), $this->txt("update_now"));
+                    $updateNowText = sprintf("<a href=\"%s\">%s</a>", $DIC->ctrl()->getLinkTarget($this, "updateAlbum"), $this->txt("update_now"));
 
                     $updateModeText .= " ($lastUpdateText | $updateNowText)";
                 }
@@ -110,7 +110,7 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
             }
 
             if (count($props) > 0) {
-                $tpl->setAlertProperties($props);
+                $DIC->ui()->mainTemplate()->setAlertProperties($props);
             }
 
             $this->addHeaderAction();
@@ -137,6 +137,9 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
     /**
      * @param string $cmd
      * Handles all commmands of this class, centralizes permission checks
+     *
+     * @throws ilCtrlException
+     * @throws ilObjectException
      */
     public function performCommand($cmd)
     {
@@ -198,19 +201,19 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
      */
     public function setTabs()
     {
-        global $ilTabs, $ilCtrl, $ilAccess, $lng;
+        global $DIC;
 
         // tab for the "show content" command
-        if ($ilAccess->checkAccess("read", "", $this->object->getRefId())) {
-            $ilTabs->addTab("content", $lng->txt("content"), $ilCtrl->getLinkTarget($this, "view"));
+        if ($DIC->access()->checkAccess("read", "", $this->object->getRefId())) {
+            $DIC->tabs()->addTab("content", $DIC->language()->txt("content"), $this->ctrl->getLinkTarget($this, "view"));
         }
 
         // standard info screen tab
         $this->addInfoTab();
 
         // tab displaying the properties
-        if ($ilAccess->checkAccess("write", "", $this->object->getRefId())) {
-            $ilTabs->addTab("properties", $lng->txt("options"), $ilCtrl->getLinkTarget($this, "edit"));
+        if ($DIC->access()->checkAccess("write", "", $this->object->getRefId())) {
+            $DIC->tabs()->addTab("properties", $DIC->language()->txt("options"), $this->ctrl->getLinkTarget($this, "edit"));
         }
 
         // standard permission tab
@@ -235,7 +238,7 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
 
     private function initForm()
     {
-        global $ilUser;
+        global $DIC;
 
         $this->plugin->includeClass("class.ilObjMMPAlbum.php");
 
@@ -244,7 +247,7 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
         $this->form->removeItemByPostVar("desc");
 
         // get user login
-        $userLogin = $ilUser->getLogin();
+        $userLogin = $DIC->user()->getLogin();
         if (strpos($userLogin, "@") === false) {
             // students do not have a '.' in their name
             if (strpos($userLogin, ".") === false) {
@@ -386,12 +389,12 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
      */
     public function edit()
     {
-        global $tpl, $ilTabs;
+        global $DIC;
 
-        $ilTabs->activateTab("properties");
+        $DIC->tabs()->activateTab("properties");
         $this->initPropertiesForm();
         $this->getPropertiesValues();
-        $tpl->setContent($this->form->getHTML());
+        $DIC->ui()->mainTemplate()->setContent($this->form->getHTML());
     }
 
 
@@ -418,9 +421,9 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
      */
     public function update()
     {
-        global $ilTabs;
+        global $DIC;
 
-        $ilTabs->activateTab("properties");
+        $DIC->tabs()->activateTab("properties");
 
         $this->initPropertiesForm();
         $this->saveOrUpdateAlbum($this->object, $this->form);
@@ -435,7 +438,7 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
      */
     private function saveOrUpdateAlbum(&$album, &$form)
     {
-        global $tpl, $lng, $ilCtrl;
+        global $DIC;
 
         if ($form->checkInput()) {
             $hasError = false;
@@ -525,24 +528,21 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
                     return;
                 } else {
                     $album->update();
-                    ilUtil::sendSuccess($lng->txt("msg_obj_modified"), true);
-                    $ilCtrl->redirect($this, "edit");
+                    ilUtil::sendSuccess($DIC->language()->txt("msg_obj_modified"), true);
+                    $this->ctrl->redirect($this, "edit");
 
                     return;
                 }
-            } else {
             }
         }
 
         $form->setValuesByPost();
-        $tpl->setContent($form->getHtml());
+        $DIC->ui()->mainTemplate()->setContent($form->getHtml());
     }
 
 
     private function updateAlbum()
     {
-        global $ilCtrl;
-
         $albumId = $this->object->getAlbumId();
         $albumXml = ilObjMMPAlbum::downloadAlbumContent($albumId);
         if ($albumXml !== false) {
@@ -557,7 +557,7 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
         }
 
         // redirect to previous page
-        $ilCtrl->redirect($this, $this->getStandardCmd());
+        $this->ctrl->redirect($this, $this->getStandardCmd());
     }
 
 
@@ -566,12 +566,12 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
      */
     public function view()
     {
-        global $tpl, $ilTabs, $ilUtil;
+        global $DIC;
 
         // permanent link
-        $tpl->setPermanentLink($this->getType(), $this->object->getRefId());
+        $DIC->ui()->mainTemplate()->setPermanentLink($this->getType(), $this->object->getRefId());
 
-        $ilTabs->activateTab("content");
+        $DIC->tabs()->activateTab("content");
 
         $album = $this->object->getAlbum();
         if ($album !== false) {
@@ -700,41 +700,41 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
             $albumTpl->setVariable("IMAGES", $mediaTpl->get());
 
             // write content
-            $tpl->setContent($albumTpl->get());
+            $DIC->ui()->mainTemplate()->setContent($albumTpl->get());
         } else {
-            $tpl->setContent($this->txt("load_album_error"));
+            $DIC->ui()->mainTemplate()->setContent($this->txt("load_album_error"));
         }
     }
 
 
     private function loadJavaScript()
     {
-        global $tpl, $https;
+        global $DIC, $https;
 
         if (version_compare(ILIAS_VERSION_NUMERIC, '4.2.0') >= 0) {
             include_once 'Services/jQuery/classes/class.iljQueryUtil.php';
             iljQueryUtil::initjQuery();
         } else {
             if ($https->isDetected()) {
-                $tpl->addJavaScript('https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js');
+                $DIC->ui()->mainTemplate()->addJavaScript('https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js');
             } else {
-                $tpl->addJavaScript('http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js');
+                $DIC->ui()->mainTemplate()->addJavaScript('http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js');
             }
         }
 
         // load our java scripts
-        $tpl->addJavaScript(
+        $DIC->ui()->mainTemplate()->addJavaScript(
             $this->plugin->getDirectory()
             . "/js/jquery.isotope.min.js"
         );
-        $tpl->addJavaScript($this->plugin->getDirectory() . "/js/xmma.js");
+        $DIC->ui()->mainTemplate()->addJavaScript($this->plugin->getDirectory() . "/js/xmma.js");
     }
 
 
     private function loadCss()
     {
-        global $tpl;
-        $tpl->addCss($this->plugin->getStyleSheetLocation("xmma.css"));
-        $tpl->addCss($this->plugin->getStyleSheetLocation("isotope.css"));
+        global $DIC;
+        $DIC->ui()->mainTemplate()->addCss($this->plugin->getStyleSheetLocation("xmma.css"));
+        $DIC->ui()->mainTemplate()->addCss($this->plugin->getStyleSheetLocation("isotope.css"));
     }
 }

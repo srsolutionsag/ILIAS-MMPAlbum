@@ -54,9 +54,9 @@ class ilObjMMPAlbum extends ilObjectPlugin
      */
     public function doCreate()
     {
-        global $ilDB;
+        global $DIC;
 
-        $ilDB->insert(
+        $DIC->database()->insert(
             "rep_robj_xmma_data", array(
                 "id"          => array("integer", $this->getId()),
                 "is_online"   => array("integer", $this->getOnline()),
@@ -73,11 +73,11 @@ class ilObjMMPAlbum extends ilObjectPlugin
      */
     public function doRead()
     {
-        global $ilDB;
+        global $DIC;
 
-        $set = $ilDB->queryF("SELECT * FROM rep_robj_xmma_data WHERE id=%s", array("integer"), array($this->getId()));
+        $set = $DIC->database()->queryF("SELECT * FROM rep_robj_xmma_data WHERE id=%s", array("integer"), array($this->getId()));
 
-        while ($rec = $ilDB->fetchAssoc($set)) {
+        while ($rec = $DIC->database()->fetchAssoc($set)) {
             $this->setOnline($rec["is_online"]);
             $this->setAlbumId($rec["album_url"]);
             $this->setUpdateMode($rec["update_mode"]);
@@ -91,9 +91,9 @@ class ilObjMMPAlbum extends ilObjectPlugin
      */
     public function doUpdate()
     {
-        global $ilDB;
+        global $DIC;
 
-        $ilDB->update(
+        $DIC->database()->update(
             "rep_robj_xmma_data", array(
             "is_online"   => array("integer", $this->getOnline()),
             "album_url"   => array("text", $this->getAlbumId()),
@@ -109,9 +109,9 @@ class ilObjMMPAlbum extends ilObjectPlugin
      */
     public function doDelete()
     {
-        global $ilDB;
+        global $DIC;
 
-        $ilDB->manipulateF("DELETE FROM rep_robj_xmma_data WHERE id=%s", array("integer"), array($this->getId()));
+        $DIC->database()->manipulateF("DELETE FROM rep_robj_xmma_data WHERE id=%s", array("integer"), array($this->getId()));
     }
 
 

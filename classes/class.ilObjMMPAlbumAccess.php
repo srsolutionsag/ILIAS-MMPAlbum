@@ -32,13 +32,13 @@ class ilObjMMPAlbumAccess extends ilObjectPluginAccess
      */
     public function _checkAccess($a_cmd, $a_permission, $a_ref_id, $a_obj_id, $a_user_id = "")
     {
-        global $ilUser, $ilAccess;
+        global $DIC;
         /**
          * @var $ilAccess \ilAccessHandler
          */
 
         if ($a_user_id == "") {
-            $a_user_id = $ilUser->getId();
+            $a_user_id = $DIC->user()->getId();
         }
 
         switch ($a_permission) {
@@ -60,13 +60,13 @@ class ilObjMMPAlbumAccess extends ilObjectPluginAccess
      */
     static function checkOnline($a_id)
     {
-        global $ilDB;
+        global $DIC;
 
-        $set = $ilDB->query(
+        $set = $DIC->database()->query(
             "SELECT is_online FROM rep_robj_xmma_data WHERE id = "
-            . $ilDB->quote($a_id, "integer")
+            . $DIC->database()->quote($a_id, "integer")
         );
-        $rec = $ilDB->fetchAssoc($set);
+        $rec = $DIC->database()->fetchAssoc($set);
 
         return (boolean) $rec["is_online"];
     }
@@ -74,16 +74,20 @@ class ilObjMMPAlbumAccess extends ilObjectPluginAccess
 
     /**
      * Check online status of example object
+     *
+     * @param $a_id
+     *
+     * @return int
      */
     static function getUpdateMode($a_id)
     {
-        global $ilDB;
+        global $DIC;
 
-        $set = $ilDB->query(
+        $set = $DIC->database()->query(
             "SELECT update_mode FROM rep_robj_xmma_data WHERE id = "
-            . $ilDB->quote($a_id, "integer")
+            . $DIC->database()->quote($a_id, "integer")
         );
-        $rec = $ilDB->fetchAssoc($set);
+        $rec = $DIC->database()->fetchAssoc($set);
 
         return (int) $rec["update_mode"];
     }

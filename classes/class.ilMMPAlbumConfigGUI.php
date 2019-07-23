@@ -35,20 +35,20 @@ class ilMMPAlbumConfigGUI extends ilPluginConfigGUI
      */
     public function configure()
     {
-        global $tpl, $ilDB;
+        global $DIC;
 
         $form = $this->initConfigurationForm();
 
         // set all plugin settings values
-        $set = $ilDB->query("SELECT * FROM rep_robj_xmma_settings");
-        while ($rec = $ilDB->fetchAssoc($set)) {
+        $set = $DIC->database()->query("SELECT * FROM rep_robj_xmma_settings");
+        while ($rec = $DIC->database()->fetchAssoc($set)) {
             $input = $form->getItemByPostVar($rec["keyword"]);
             if ($input) {
                 $input->setValue($rec["value"]);
             }
         }
 
-        $tpl->setContent($form->getHTML());
+        $DIC->ui()->mainTemplate()->setContent($form->getHTML());
     }
 
 
@@ -60,7 +60,7 @@ class ilMMPAlbumConfigGUI extends ilPluginConfigGUI
      */
     public function initConfigurationForm()
     {
-        global $lng, $ilCtrl;
+        global $DIC;
 
         $pl = $this->getPluginObject();
 
@@ -68,7 +68,7 @@ class ilMMPAlbumConfigGUI extends ilPluginConfigGUI
         $form = new ilPropertyFormGUI();
         $form->setTableWidth("100%");
         $form->setTitle($pl->txt("plugin_configuration"));
-        $form->setFormAction($ilCtrl->getFormAction($this));
+        $form->setFormAction($DIC->ctrl()->getFormAction($this));
 
         // secret key (text)
         $secretKey = new ilTextInputGUI($pl->txt("secret_key"), "secret_key");
@@ -94,7 +94,7 @@ class ilMMPAlbumConfigGUI extends ilPluginConfigGUI
         $urlListFormat->setSize(80);
         $form->addItem($urlListFormat);
 
-        $form->addCommandButton("save", $lng->txt("save"));
+        $form->addCommandButton("save", $DIC->language()->txt("save"));
 
         return $form;
     }
@@ -106,7 +106,7 @@ class ilMMPAlbumConfigGUI extends ilPluginConfigGUI
      */
     public function save()
     {
-        global $tpl, $lng, $ilCtrl, $ilDB;
+        global $DIC;
 
         $form = $this->initConfigurationForm();
         if ($form->checkInput()) {
@@ -115,7 +115,7 @@ class ilMMPAlbumConfigGUI extends ilPluginConfigGUI
                 $value = $form->getInput($keyword);
 
                 // save to db
-                $ilDB->update(
+                $DIC->database()->update(
                     "rep_robj_xmma_settings", array(
                     "value" => array(
                         "clob",
@@ -125,11 +125,11 @@ class ilMMPAlbumConfigGUI extends ilPluginConfigGUI
                 );
             }
 
-            ilUtil::sendSuccess($lng->txt("saved_successfully"), true);
-            $ilCtrl->redirect($this, "configure");
+            ilUtil::sendSuccess($DIC->language()->txt("saved_successfully"), true);
+            $DIC->ctrl()->redirect($this, "configure");
         } else {
             $form->setValuesByPost();
-            $tpl->setContent($form->getHtml());
+            $DIC->ui()->mainTemplate()->setContent($form->getHtml());
         }
     }
 }

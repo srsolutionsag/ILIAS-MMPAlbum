@@ -35,7 +35,7 @@ class ilObjMMPAlbumListGUI extends ilObjectPluginListGUI
      */
     public function initCommands()
     {
-        global $lng;
+        global $DIC;
 
         return array(
             array(
@@ -46,7 +46,7 @@ class ilObjMMPAlbumListGUI extends ilObjectPluginListGUI
             array(
                 "permission" => "write",
                 "cmd"        => "edit",
-                "txt"        => $lng->txt("edit"),
+                "txt"        => $DIC->language()->txt("edit"),
                 "default"    => false,
             ),
         );
@@ -76,10 +76,7 @@ class ilObjMMPAlbumListGUI extends ilObjectPluginListGUI
      */
     public function getProperties()
     {
-        global $lng, $ilAccess;
-        /**
-         * @var $ilAccess \ilAccessHandler
-         */
+        global $DIC;
 
         $props = array();
 
@@ -87,13 +84,13 @@ class ilObjMMPAlbumListGUI extends ilObjectPluginListGUI
         if (!ilObjMMPAlbumAccess::checkOnline($this->obj_id)) {
             $props[] = array(
                 "alert"    => true,
-                "property" => $lng->txt("status"),
-                "value"    => $lng->txt("offline"),
+                "property" => $DIC->language()->txt("status"),
+                "value"    => $DIC->language()->txt("offline"),
             );
         }
 
         // if the user can edit the album, display the update type
-        if ($ilAccess->checkAccess("write", "", $this->ref_id)) {
+        if ($DIC->access()->checkAccess("write", "", $this->ref_id)) {
             $this->plugin->includeClass("class.ilObjMMPAlbum.php");
 
             $updateMode = ilObjMMPAlbumAccess::getUpdateMode($this->obj_id);

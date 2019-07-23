@@ -87,11 +87,11 @@ class ilMMPAlbumPlugin extends ilRepositoryObjectPlugin
      */
     public static function getSetting($keyword)
     {
-        global $ilDB;
+        global $DIC;
 
-        $set = $ilDB->queryF("SELECT value FROM rep_robj_xmma_settings WHERE keyword=%s", array("text"), array($keyword));
+        $set = $DIC->database()->queryF("SELECT value FROM rep_robj_xmma_settings WHERE keyword=%s", array("text"), array($keyword));
 
-        while ($rec = $ilDB->fetchAssoc($set)) {
+        while ($rec = $DIC->database()->fetchAssoc($set)) {
             return $rec["value"];
         }
 
