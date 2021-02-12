@@ -44,7 +44,7 @@ class ilObjMMPAlbumAccess extends ilObjectPluginAccess
         switch ($a_permission) {
             case "read":
                 if (!ilObjMMPAlbumAccess::checkOnline($a_obj_id)
-                    && !$ilAccess->checkAccessOfUser($a_user_id, "write", "", $a_ref_id)
+                    && !$DIC->access()->checkAccessOfUser($a_user_id, "write", "", $a_ref_id)
                 ) {
                     return false;
                 }

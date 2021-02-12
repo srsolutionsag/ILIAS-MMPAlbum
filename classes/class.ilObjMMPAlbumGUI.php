@@ -496,7 +496,7 @@ class ilObjMMPAlbumGUI extends ilObjectPluginGUI
 
                 // description not defined? try to load from XML
                 $albumObj = @simplexml_load_string($albumXml);
-                if (albumObj !== false) {
+                if ($albumObj !== false) {
                     if (trim($title) == "") {
                         $title = $albumObj->Title;
                     }
